@@ -177,12 +177,12 @@
     "@agentclientprotocol/sdk": "1.9.0",
     "@openai/codex": "0.170.0",
     "acpx": "0.22.0",
-    "ajv": "^8.20.0",
-    "json-schema-to-ts": "^3.1.1",
+    "ajv": "catalog:",
+    "json-schema-to-ts": "catalog:",
     "opencode-ai": "1.18.34",
-    "react-markdown": "^10.1.0",
-    "remark-gfm": "^4.0.1",
-    "smol-toml": "^1.9.1"
+    "react-markdown": "catalog:",
+    "remark-gfm": "catalog:",
+    "smol-toml": "catalog:"
   },
   "peerDependencies": {
     "react": ">=18",
@@ -198,17 +198,17 @@
   },
   "devDependencies": {
     "@paperclipai/paperclip-eval-kernel": "workspace:*",
-    "@types/node": "^24.0.0",
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.5",
-    "@vitejs/plugin-react": "^4.7.0",
-    "axe-core": "^4.12.1",
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7",
-    "tsx": "^4.23.15",
-    "typescript": "^7.0.2",
-    "vite": "^6.1.0",
-    "vitest": "^5.0.3"
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "axe-core": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:"
   },
   "optionalDependencies": {
     "@github/copilot-darwin-arm64": "1.0.88",

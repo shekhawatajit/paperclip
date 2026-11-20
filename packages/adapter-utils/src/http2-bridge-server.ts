@@ -1340,7 +1340,7 @@ export function createHttp2BridgeServer(options: CreateHttp2BridgeServerOptions)
   });
 
   server.on("stream", (stream, headers) => {
-    void handleStream(stream, headers).catch((error) => {
+    void handleStream(stream as http2.ServerHttp2Stream, headers).catch((error) => {
       // A fault inside `handleStream` itself (not a forward-handler or
       // stream-body rejection, both already caught above) is a defensive
       // last resort. Destroy only this stream; the session stays open.

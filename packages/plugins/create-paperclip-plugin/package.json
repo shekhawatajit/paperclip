@@ -45,8 +45,8 @@
     "@paperclipai/plugin-sdk": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^24.0.0",
-    "typescript": "^7.0.2"
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
   },
   "engines": {
     "node": ">=24.11.0"

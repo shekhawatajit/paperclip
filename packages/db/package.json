@@ -48,18 +48,18 @@
     "seed": "pnpm --filter @paperclipai/server exec tsx scripts/seed.ts"
   },
   "dependencies": {
-    "@azure/identity": "^4.5.0",
+    "@azure/identity": "catalog:",
     "@paperclipai/shared": "workspace:*",
-    "drizzle-orm": "^0.45.2",
-    "embedded-postgres": "^18.1.0-beta.16",
-    "postgres": "^3.4.9"
+    "drizzle-orm": "catalog:",
+    "embedded-postgres": "catalog:",
+    "postgres": "catalog:"
   },
   "devDependencies": {
-    "@types/node": "^24.0.0",
-    "drizzle-kit": "^0.31.11",
-    "tsx": "^4.23.15",
-    "typescript": "^7.0.2",
-    "vitest": "^5.0.3"
+    "@types/node": "catalog:",
+    "drizzle-kit": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "engines": {
     "node": ">=24.11.0"
