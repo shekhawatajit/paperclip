@@ -31,7 +31,7 @@ and bootstrap process.
 
 ## Build and install locally
 
-Requires Node 24.11+, pnpm, and an installed Paperclip checkout.
+Requires Node 26+, pnpm, and an installed Paperclip checkout.
 
 ```sh
 cd packages/plugins/sandbox-providers/boxd

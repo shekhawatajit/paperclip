@@ -25,14 +25,14 @@ async function assets(dir, out) {
 for (const pkg of ['packages/shared', 'packages/db', 'server']) {
   const src = path.join(root, pkg, 'src');
   await build({ entryPoints: await sources(src), outbase: src, outdir: path.join(root, pkg, 'dist'),
-    format: 'esm', platform: 'node', target: 'node24', sourcemap: true, logLevel: 'warning' });
+    format: 'esm', platform: 'node', target: 'node26', sourcemap: true, logLevel: 'warning' });
   await assets(src, path.join(root, pkg, 'dist'));
 }
 await cp('packages/db/src/migrations', 'packages/db/dist/migrations', { recursive: true });
 await cp('packages/shared/src/app-definitions', 'packages/shared/dist/app-definitions', { recursive: true });
 await mkdir('server/dist/__tests__/helpers', { recursive: true });
 await build({ entryPoints: ['server/src/__tests__/helpers/tool-profile-projection-fixture.ts', 'server/src/__tests__/helpers/embedded-postgres.ts'],
-  outbase: 'server/src/__tests__/helpers', outdir: 'server/dist/__tests__/helpers', format: 'esm', platform: 'node', target: 'node24', sourcemap: true });
+  outbase: 'server/src/__tests__/helpers', outdir: 'server/dist/__tests__/helpers', format: 'esm', platform: 'node', target: 'node26', sourcemap: true });
 for (const [label, sha] of [['baseline', '1f8f2e195f4897cd1c237bdc068de95780ab0c3c'], ['pending', 'fd59c0183ce64c44696f79604516f4d51ca5662b']]) {
   for (const [name, file] of [['projection', 'profiles/projection'], ['service', 'profiles/service'], ['attention', 'catalog/attention']]) {
     const relative = `server/src/services/tool-access/${file}.ts`;
@@ -40,7 +40,7 @@ for (const [label, sha] of [['baseline', '1f8f2e195f4897cd1c237bdc068de95780ab0c
     if (name === 'service') code = code.replace('from "./projection.js"', `from "./.${label}-projection.js"`);
     if (name === 'attention') code = code.replace('from "../profiles/projection.js"', `from "../profiles/.${label}-projection.js"`);
     const outfile = `server/dist/services/tool-access/${path.dirname(file)}/.${label}-${name}.js`;
-    const result = await transform(code, { loader: 'ts', format: 'esm', platform: 'node', target: 'node24', sourcefile: relative, sourcemap: 'inline' });
+    const result = await transform(code, { loader: 'ts', format: 'esm', platform: 'node', target: 'node26', sourcefile: relative, sourcemap: 'inline' });
     await writeFile(outfile, result.code);
   }
 }

@@ -7,9 +7,6 @@ name: Build image
 #
 # This is the fork's own workflow: the upstream docker.yml only runs for paperclipai/paperclip.
 on:
-  push:
-    branches:
-      - "azure-entra-postgres"
   workflow_dispatch:
 
 # Nothing at the workflow level; the job declares the two scopes it uses.

@@ -6,7 +6,8 @@ RUN apt-get update \
   && apt-get install -y --no-install-recommends ca-certificates gosu curl gh git wget ripgrep python3 tini \
   && rm -rf /var/lib/apt/lists/* \
   && npm install --global corepack \
-  && corepack enable
+  && corepack enable \
+  && corepack prepare pnpm@12.21.0 --activate
 
 # Modify the existing node user/group to have the specified UID/GID to match host user
 RUN usermod -u $USER_UID --non-unique node \
@@ -135,8 +136,8 @@ COPY packages/shared/src/provider-failure.generated.ts /packages/shared/src/
 # here also runs on trixie. The pack copies this Node binary as its own
 # interpreter, which is why the exact Node release is pinned and part of the
 # image identity. The digest is the multi-platform index (amd64 and arm64).
-FROM node:24.22.3-bookworm@sha256:9d266751ca3d7fdbe651c878ffd5ad0a42fed49a18c283509267c97f025b7496 AS runner-artifacts-node
-RUN corepack enable
+FROM node:26.13.1-bookworm@sha256:b7087bc4d973034b30854b378ba107f9fab622b47514cb7e2592e41b8bab8d49 AS runner-artifacts-node
+RUN corepack enable && corepack prepare pnpm@12.21.0 --activate
 
 # The image identity, computed inside the build from the files the build
 # actually receives. `--target runner-artifacts-identity` exports it alone, so

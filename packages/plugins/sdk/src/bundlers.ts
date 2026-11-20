@@ -80,7 +80,7 @@ export function createPluginBundlerPresets(input: PluginBundlerPresetInput = {})
     bundle: true,
     format: "esm",
     platform: "node",
-    target: "node24",
+    target: "node26",
     sourcemap,
     minify,
     external: ["react", "react-dom"],
@@ -92,7 +92,7 @@ export function createPluginBundlerPresets(input: PluginBundlerPresetInput = {})
     bundle: true,
     format: "esm",
     platform: "node",
-    target: "node24",
+    target: "node26",
     sourcemap,
     external: ["@paperclipai/plugin-sdk"],
   };

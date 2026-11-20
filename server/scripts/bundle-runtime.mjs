@@ -87,7 +87,7 @@ export async function bundleRuntime({ entry, outdir, maintenanceEntry, ephemeral
     splitting: true,
     format: "esm",
     platform: "node",
-    target: "node24",
+    target: "node26",
     mainFields: ["main"],
     conditions: ["node"],
     banner: { js: REQUIRE_SHIM },

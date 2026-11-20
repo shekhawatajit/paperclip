@@ -67,7 +67,7 @@ import { resolveClaudeModel, SANDBOX_INSTALL_COMMAND } from "../index.js";
 
 const moduleDir = path.dirname(fileURLToPath(import.meta.url));
 const packageRootDir = path.resolve(moduleDir, "../..");
-const MIN_ACP_NODE_VERSION = "24.11.0";
+const MIN_ACP_NODE_VERSION = "26.0.0";
 
 export type ClaudeExecutionEngine = "cli" | "acp";
 

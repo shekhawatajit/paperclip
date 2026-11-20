@@ -822,7 +822,7 @@ attempt directory. A Node module-resolution hook keeps the CLI's relative
 imports pointed at the trusted source checkout; it does not reload the original
 entry file. Installed dependencies still belong to that trusted checkout. The
 staged copies are removed after verified process cleanup and kept if cleanup is
-incomplete. This path requires the repository's Node 24.11+ runtime.
+incomplete. This path requires the repository's Node 26+ runtime.
 
 Each Linux protocol worker snapshots its current Node executable into a fresh
 owner-only directory before credential steps. The copy keeps the same bytes

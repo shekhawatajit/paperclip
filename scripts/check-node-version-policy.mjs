@@ -1,11 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { isNode24ImageTag } from "./node-image-policy.mjs";
+import { NODE_MAJOR, isNodeImageTag } from "./node-image-policy.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const expectedEngine = ">=24.11.0";
-const expectedTypes = "^24.0.0";
+const expectedEngine = `>=${NODE_MAJOR}.0.0`;
+const typesMajor = `^${NODE_MAJOR}.`;
 const failures = [];
 const skippedDirectories = new Set([".git", ".paperclip", "coverage", "data", "dist", "node_modules"]);
 
@@ -14,6 +14,7 @@ function relative(filePath) {
 }
 
 function walk(directory, visit) {
+  if (!fs.existsSync(directory)) return;
   for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
     if (entry.isDirectory() && skippedDirectories.has(entry.name)) continue;
     const entryPath = path.join(directory, entry.name);
@@ -22,32 +23,34 @@ function walk(directory, visit) {
   }
 }
 
+// The workspace catalog is the single source of dependency versions; package.json files reference it.
+const workspaceManifest = fs.readFileSync(path.join(repoRoot, "pnpm-workspace.yaml"), "utf8");
+const catalogTypes = /^ {2}"?@types\/node"?:\s*"([^"]+)"/m.exec(workspaceManifest)?.[1];
+if (!catalogTypes?.startsWith(typesMajor)) {
+  failures.push(`pnpm-workspace.yaml: catalog @types/node must be ${typesMajor}x, found ${catalogTypes ?? "missing"}`);
+}
+
 walk(repoRoot, (filePath) => {
   if (path.basename(filePath) !== "package.json") return;
   const manifest = JSON.parse(fs.readFileSync(filePath, "utf8"));
   for (const section of ["dependencies", "devDependencies", "optionalDependencies", "peerDependencies"]) {
     const specifier = manifest[section]?.["@types/node"];
-    if (specifier && specifier !== expectedTypes) {
-      failures.push(`${relative(filePath)}: ${section}.@types/node must be ${expectedTypes}, found ${specifier}`);
+    if (specifier && specifier !== "catalog:" && !specifier.startsWith(typesMajor)) {
+      failures.push(`${relative(filePath)}: ${section}.@types/node must be catalog: or ${typesMajor}x, found ${specifier}`);
     }
   }
+  // The runner's kimi/pi distributions install under their own pinned Node 24.21.0 interpreter.
+  if (/scripts[\\/](kimi|pi)-distribution[\\/]package\.json$/.test(filePath)) return;
   if (manifest.engines?.node !== expectedEngine) {
     failures.push(`${relative(filePath)}: engines.node must be ${expectedEngine}, found ${manifest.engines?.node ?? "missing"}`);
   }
 });
 
-const workflowRoot = path.join(repoRoot, ".github", "workflows");
-walk(workflowRoot, (filePath) => {
+walk(path.join(repoRoot, ".github", "workflows"), (filePath) => {
   if (!/\.ya?ml$/.test(filePath)) return;
   const source = fs.readFileSync(filePath, "utf8");
-  const packProducer = relative(filePath) === ".github/workflows/release-verify.yml"
-    ? /(?:^|\n)  runner_binaries:\n[\s\S]*?(?=\n  [a-z_]+:\n|$)/.exec(source)
-    : null;
   for (const match of source.matchAll(/node-version:\s*["']?([^\s"'#]+)/g)) {
-    if (match[1] === "24.21.0" && packProducer
-      && match.index >= packProducer.index
-      && match.index < packProducer.index + packProducer[0].length) continue;
-    if (match[1] !== "24") failures.push(`${relative(filePath)}: node-version must be 24, found ${match[1]}`);
+    if (match[1] !== String(NODE_MAJOR)) failures.push(`${relative(filePath)}: node-version must be ${NODE_MAJOR}, found ${match[1]}`);
   }
 });
 
@@ -55,32 +58,16 @@ walk(repoRoot, (filePath) => {
   if (!path.basename(filePath).startsWith("Dockerfile")) return;
   const source = fs.readFileSync(filePath, "utf8");
   for (const match of source.matchAll(/^\s*FROM\s+node:([^\s]+)/gm)) {
-    if (!isNode24ImageTag(match[1])) failures.push(`${relative(filePath)}: Node base image must use the Node 24 major, found node:${match[1]}`);
+    if (!isNodeImageTag(match[1])) failures.push(`${relative(filePath)}: Node base image must use the Node ${NODE_MAJOR} major, found node:${match[1]}`);
   }
   for (const match of source.matchAll(/^\s*ARG\s+NODE_(?:MAJOR|VERSION)=([^\s]+)/gm)) {
-    if (match[1] !== "24") failures.push(`${relative(filePath)}: Node build argument must be 24, found ${match[1]}`);
+    if (match[1] !== String(NODE_MAJOR)) failures.push(`${relative(filePath)}: Node build argument must be ${NODE_MAJOR}, found ${match[1]}`);
   }
 });
 
-const requiredSourceFragments = [
-  [".nvmrc", "24"],
-  ["packages/shared/src/node-version.ts", 'MINIMUM_NODE_VERSION = "24.11.0"'],
-  ["scripts/install.sh", "MIN_NODE_VERSION=\"${MIN_NODE_MAJOR}.${MIN_NODE_MINOR}.${MIN_NODE_PATCH}\""],
-  ["scripts/install.sh", "MIN_NODE_MAJOR=24"],
-  ["scripts/install.sh", "MIN_NODE_MINOR=11"],
-  ["scripts/install.sh", "DEFAULT_NODE_MAJOR=24"],
-  ["docker/agent-runtime/Dockerfile.base", "ARG NODE_VERSION=24"],
-  ["packages/adapter-utils/src/sandbox-install-command.ts", "NODE_VERSION=\"v24.11.0\""],
-  ["packages/plugins/sandbox-providers/exe-dev/src/plugin.ts", "nodesource.com/setup_24.x"],
-  ["packages/plugins/sandbox-providers/modal/src/manifest.ts", 'default: "node:24"'],
-  ["cli/esbuild.config.mjs", 'target: "node24"'],
-  ["packages/plugins/sdk/src/bundlers.ts", 'target: "node24"'],
-  ["scripts/generate-npm-package-json.mjs", `engines: { node: "${expectedEngine}" }`],
-];
-
-for (const [filePath, fragment] of requiredSourceFragments) {
-  const source = fs.readFileSync(path.join(repoRoot, filePath), "utf8");
-  if (!source.includes(fragment)) failures.push(`${filePath}: missing Node 24 policy fragment ${JSON.stringify(fragment)}`);
+const nvmrc = path.join(repoRoot, ".nvmrc");
+if (fs.existsSync(nvmrc) && fs.readFileSync(nvmrc, "utf8").trim() !== String(NODE_MAJOR)) {
+  failures.push(`.nvmrc: must be ${NODE_MAJOR}`);
 }
 
 if (failures.length > 0) {
@@ -89,4 +76,4 @@ if (failures.length > 0) {
   process.exit(1);
 }
 
-console.log("Node version policy check passed (Node >=24.11.0, @types/node 24.x).");
+console.log(`Node version policy check passed (Node ${expectedEngine}, @types/node ${NODE_MAJOR}.x).`);

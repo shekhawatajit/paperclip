@@ -276,7 +276,7 @@ async function readLosslessJson(
       if (size > maxBytes) invalidResponse();
       chunks.push(chunk.value);
     }
-    // Node >=24.11 (the repository's supported runtime) supplies context.source.
+    // Node >=26 (the repository's supported runtime) supplies context.source.
     // Never recover an unsafe ID from the already rounded numeric value.
     return JSON.parse(
       new TextDecoder("utf-8", { fatal: true }).decode(Buffer.concat(chunks)),

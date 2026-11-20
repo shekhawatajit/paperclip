@@ -293,7 +293,7 @@ const claudeLocalAdapter: ServerAdapterModule = {
     agentId: "claude",
     skillsMode: "ephemeral",
     prerequisites: {
-      nodeRange: ">=24.11.0",
+      nodeRange: ">=26.0.0",
       packages: ["@agentclientprotocol/claude-agent-acp"],
     },
   },
@@ -369,7 +369,7 @@ const codexLocalAdapter: ServerAdapterModule = {
     agentId: "codex",
     skillsMode: "ephemeral",
     prerequisites: {
-      nodeRange: ">=24.11.0",
+      nodeRange: ">=26.0.0",
       packages: ["@agentclientprotocol/codex-acp"],
     },
   },
@@ -874,7 +874,7 @@ const geminiLocalAdapter: ServerAdapterModule = {
     agentId: "gemini",
     skillsMode: "ephemeral",
     prerequisites: {
-      nodeRange: ">=24.11.0",
+      nodeRange: ">=26.0.0",
       packages: ["@google/gemini-cli"],
     },
   },
