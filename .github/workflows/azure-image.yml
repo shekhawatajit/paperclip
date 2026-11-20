@@ -70,5 +70,9 @@ jobs:
           build-args: |
             PAPERCLIP_BUILD_COMMIT=${{ github.sha }}
             CLOUD_BUNDLED_SERVER_DEPS=@sentry/node @opentelemetry/sdk-node @opentelemetry/auto-instrumentations-node @opentelemetry/semantic-conventions @opentelemetry/resources @opentelemetry/exporter-trace-otlp-grpc
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          # Registry cache, not type=gha: the layers here (about 2.9 GB of node_modules, a 2.5 GB provider
+          # pack, the Rust toolchain and daemon build) exceed GitHub's 10 GB Actions cache limit, so the
+          # gha cache is evicted and every build starts cold. GHCR has no such limit and only changed
+          # layers are pushed. The first build after this change is still cold.
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:buildcache
+          cache-to: type=registry,ref=ghcr.io/${{ github.repository }}:buildcache,mode=max,oci-mediatypes=true,image-manifest=true,compression=zstd
