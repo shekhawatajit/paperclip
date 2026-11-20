@@ -484,7 +484,7 @@ RUN set -eu; \
   for name in $CLOUD_BUNDLED_PLUGINS; do \
     dir="packages/plugins/sandbox-providers/$name"; \
     test -d "$dir" || { echo "ERROR: unknown sandbox provider '$name'" >&2; exit 1; }; \
-    pnpm -C "$dir" install --ignore-workspace --config.lockfile=false; \
+    pnpm -C "$dir" install --ignore-workspace --config.lockfile=false --allow-build=protobufjs; \
     pnpm -C "$dir" build; \
     test -f "$dir/dist/manifest.js" || { echo "ERROR: $dir is missing dist/manifest.js after build" >&2; exit 1; }; \
   done
@@ -543,7 +543,7 @@ RUN set -eu; \
     specifiers="$specifiers ${name}@${version}"; \
   done; \
   test -n "$specifiers" || { echo "ERROR: CLOUD_BUNDLED_SERVER_DEPS names no package" >&2; exit 1; }; \
-  pnpm add --ignore-workspace --config.lockfile=false $specifiers
+  pnpm add --ignore-workspace --config.lockfile=false --allow-build=protobufjs $specifiers
 
 FROM production AS cloud
 COPY --chown=node:node --from=cloud-plugins /app/packages/plugins/sandbox-providers /app/packages/plugins/sandbox-providers
