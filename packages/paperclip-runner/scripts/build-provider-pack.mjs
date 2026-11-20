@@ -92,6 +92,10 @@ try {
     throw new Error(`pnpm deploy failed with exit code ${deployed.status}`);
   }
   removeControllerArtifactsFromProviderPack(temporaryRoot);
+  // pnpm 11+ runs the deployed package's own postinstall (install-copilot-assets.mjs). On a supported
+  // platform that already writes provider-assets/copilot/<target> into the pack, and the verified
+  // candidate build below creates the same files exclusively (EEXIST). The candidate build owns these.
+  rmSync(join(temporaryRoot, "provider-assets"), { recursive: true, force: true });
   const foreignLibcPackages = removeForeignLibcPackagesFromProviderPack(temporaryRoot, providerPackLibc());
   if (foreignLibcPackages.length) {
     process.stderr.write(`Removed ${foreignLibcPackages.length} provider-pack packages built for another libc: ${foreignLibcPackages.join(", ")}\n`);
