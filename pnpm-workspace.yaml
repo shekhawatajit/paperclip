@@ -238,7 +238,16 @@ minimumReleaseAgeExclude:
 
 # pnpm 12 blocks dependency build scripts unless listed here.
 allowBuilds:
-  "@embedded-postgres/windows-x64": true # hydrates embedded postgres binaries
+  # Platform packages of embedded-postgres hydrate their binaries in postinstall. Only the one matching
+  # the install platform is fetched, so every variant must be approved (Windows dev, Linux image, macOS).
+  "@embedded-postgres/windows-x64": true
+  "@embedded-postgres/darwin-arm64": true
+  "@embedded-postgres/darwin-x64": true
+  "@embedded-postgres/linux-arm64": true
+  "@embedded-postgres/linux-arm": true
+  "@embedded-postgres/linux-ia32": true
+  "@embedded-postgres/linux-ppc64": true
+  "@embedded-postgres/linux-x64": true
   esbuild: true # selects the platform binary
   opencode-ai: true # downloads the opencode runtime
   protobufjs: false # optional postinstall, not needed
