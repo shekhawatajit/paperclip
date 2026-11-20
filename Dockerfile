@@ -38,7 +38,7 @@ COPY package.json pnpm-workspace.yaml pnpm-lock.yaml .npmrc ./
 COPY packages/paperclip-eval-kernel/package.json packages/paperclip-eval-kernel/
 COPY packages/paperclip-runner/package.json packages/paperclip-runner/
 COPY patches/ patches/
-RUN pnpm install --frozen-lockfile --lockfile-only --offline --ignore-scripts --filter '@paperclipai/paperclip-runner...' > /tmp/runner-lockfile.log 2>&1 \
+RUN pnpm install --frozen-lockfile --lockfile-only --ignore-scripts --filter '@paperclipai/paperclip-runner...' > /tmp/runner-lockfile.log 2>&1 \
   || { cat /tmp/runner-lockfile.log >&2; \
     if grep -Eq 'ERR_PNPM_OUTDATED_LOCKFILE|ERR_PNPM_LOCKFILE_CONFIG_MISMATCH' /tmp/runner-lockfile.log; then \
       echo "ERROR: pnpm-lock.yaml is behind the manifests the Runner is installed from: package.json, pnpm-workspace.yaml, patches, packages/paperclip-runner/package.json or packages/paperclip-eval-kernel/package.json. The image build installs the Runner with a frozen lockfile, so it stops here. Run this command in the checkout, then build again: pnpm install --resolution-only --ignore-scripts --no-frozen-lockfile" >&2; \
