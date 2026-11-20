@@ -116,7 +116,7 @@ async function runCaptured(command, args, cwd, log) {
 }
 
 const FROZEN_INSTALL_ARGS = ["install", "--ignore-workspace", "--frozen-lockfile"];
-export const RESOLVE_LOCKFILE_ARGS = ["install", "--ignore-workspace", "--resolution-only", "--ignore-scripts", "--no-frozen-lockfile"];
+export const RESOLVE_LOCKFILE_ARGS = ["install", "--ignore-workspace", "--lockfile-only", "--ignore-scripts", "--no-frozen-lockfile"];
 
 /**
  * Install a standalone package. A package with a committed lockfile installs it frozen. Contributors

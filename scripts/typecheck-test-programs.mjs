@@ -70,7 +70,7 @@ const LOCKED_INSTALL_ARGS = ["install", "--ignore-workspace", ...INSTALL_ARGS.sl
 // Contributors do not commit provider lockfiles: the lockfile refresh workflow regenerates them after
 // merge, as it does the root pnpm-lock.yaml. Until then a changed manifest leaves the lockfile stale,
 // so resolve it in place, like the root install in CI.
-export const RESOLVE_ARGS = ["install", "--resolution-only", "--ignore-scripts", "--no-frozen-lockfile"];
+export const RESOLVE_ARGS = ["install", "--lockfile-only", "--ignore-scripts", "--no-frozen-lockfile"];
 const LOCKED_RESOLVE_ARGS = ["install", "--ignore-workspace", ...RESOLVE_ARGS.slice(1)];
 
 export function findUncheckedTests({ trackedFiles, checkedFiles, checkedElsewhere = CHECKED_ELSEWHERE }) {

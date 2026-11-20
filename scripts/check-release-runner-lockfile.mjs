@@ -8,7 +8,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { RUNNER_IMAGE_CONTEXT_INPUTS } from "./runner-image-identity.mjs";
 import { runnerLockState } from "./runner-image-publish.mjs";
 
-export const LOCKFILE_REFRESH_COMMAND = "pnpm install --resolution-only --ignore-scripts --no-frozen-lockfile";
+export const LOCKFILE_REFRESH_COMMAND = "pnpm install --lockfile-only --ignore-scripts --no-frozen-lockfile";
 
 export function runnerLockStateAtCommit({ repoRoot, commit = "HEAD", run = spawnSync, lockState = runnerLockState }) {
   const scratch = mkdtempSync(path.join(tmpdir(), "paperclip-release-runner-lockfile-"));
