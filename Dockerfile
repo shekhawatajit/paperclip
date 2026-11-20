@@ -137,7 +137,10 @@ COPY packages/shared/src/provider-failure.generated.ts /packages/shared/src/
 # interpreter, which is why the exact Node release is pinned and part of the
 # image identity. The digest is the multi-platform index (amd64 and arm64).
 FROM node:26.13.1-bookworm@sha256:b7087bc4d973034b30854b378ba107f9fab622b47514cb7e2592e41b8bab8d49 AS runner-artifacts-node
-RUN corepack enable && corepack prepare pnpm@12.21.0 --activate
+# Node 25+ no longer bundles corepack, so install it first (the base stage does the same).
+RUN npm install --global corepack \
+  && corepack enable \
+  && corepack prepare pnpm@12.21.0 --activate
 
 # The image identity, computed inside the build from the files the build
 # actually receives. `--target runner-artifacts-identity` exports it alone, so
